@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Login Page</string>
+    <string name="LoginHint">Username:</string>
+    <string name="PasswordHint">Password:</string>
+    <string name="Welcome">WELCOME!</string>
+
+    <string name="regActivity">Registration</string>
+</resources>
