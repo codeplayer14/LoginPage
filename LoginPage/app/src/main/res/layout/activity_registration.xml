@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:text="@string/PasswordHint"
         android:id="@+id/PasswordText"
+
         android:layout_marginStart="40dp"
 
         android:layout_below="@+id/LoginText"
@@ -51,6 +52,7 @@
 
         android:layout_alignBaseline="@+id/PasswordText"
         android:layout_alignBottom="@+id/PasswordText"
+        android:inputType="textPassword"
         android:layout_toEndOf="@+id/LoginText"
         android:id="@+id/userPasswordRegister" />
 

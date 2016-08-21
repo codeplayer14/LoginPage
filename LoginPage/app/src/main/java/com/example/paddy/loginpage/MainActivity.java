@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.support.annotation.UiThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,15 +22,17 @@ public class MainActivity extends AppCompatActivity {
 
     private  String UserNameText;
     private  String PasswordText;
+    EditText username;
+    EditText password;
+    Bundle data=new Bundle();
 
-   private Intent intentWelcome= new Intent(MainActivity.this,Welcome.class);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EditText username;
-        EditText password;
+
         username= (EditText) findViewById(R.id.username);
 
         password= (EditText) findViewById(R.id.password);
@@ -37,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
         Button submit= (Button) findViewById(R.id.submit);
 
         Button register= (Button)findViewById(R.id.register);
-        UserNameText= String.valueOf(username.getText());
 
-        PasswordText= String.valueOf(password.getText());
 
        OnClickListener RegisterListener= new OnClickListener() {
            @Override
@@ -55,10 +56,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                UserNameText= String.valueOf(username.getText());
 
-                new UpdateTask().execute();
+                PasswordText= String.valueOf(password.getText());
+try {
+    new UpdateTask().execute().get();
+}
+catch (Exception e)
+{
+  e.printStackTrace();
+}
                 Toast toast= Toast.makeText(getApplicationContext(),"Submission Successful",Toast.LENGTH_SHORT);
                 toast.show();
+
+
+                    Intent intentWelcome = new Intent(MainActivity.this, Welcome.class);
+                    intentWelcome.putExtras(data);
+                    startActivity(intentWelcome);
+
             }
         };
 
@@ -75,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private class UpdateTask extends AsyncTask<Void,Void,Boolean>
+    private class UpdateTask extends AsyncTask<Bundle,Boolean,Boolean>
     {
 
 
@@ -86,45 +101,57 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
 
+
+
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Boolean doInBackground(Bundle... data2) {
 
 
             try {
 
                 SQLiteOpenHelper helper=new Database(getApplicationContext());
                 SQLiteDatabase db=  helper.getReadableDatabase();
-                Cursor cursor= db.query("USERINFO",new String[]{ "USERNAME,PASSWORD"},null,null,null,null,null);
-                if(cursor.moveToFirst()) {
-                    userCheck = cursor.getString(0);
-                    passCheck = cursor.getString(1);
-                }
-                while(cursor.moveToNext())
-                {
 
+                Cursor cursor= db.query("USERINFO",new String[]{ "USERNAME,PASSWORD"},null,null,null,null,null);
+                cursor.moveToFirst();
+
+                while (!cursor.isAfterLast()) {
+
+
+
+                    userCheck = cursor.getString(cursor.getColumnIndex("USERNAME"));
+
+                    passCheck = cursor.getString(cursor.getColumnIndex("PASSWORD"));
 
 
                     if(userCheck.equals(UserNameText)&&passCheck.equals(PasswordText))
                     {
+
                         flag=true;
                         break;
 
+
                     }
+
+
                     cursor.moveToNext();
-                    userCheck = cursor.getString(0);
-                    passCheck = cursor.getString(1);
-                }
+
+               }
+
                 cursor.close();
+
                 if(flag)
                 {
-                    intentWelcome.putExtra(Welcome.UserName,UserNameText);
-                    intentWelcome.putExtra(Welcome.Password,PasswordText);
-                    intentWelcome.putExtra(Welcome.Exists,true);
+
+                    data.putString(Welcome.UserName,UserNameText);
+                    data.putString(Welcome.Password,PasswordText);
+                    data.putBoolean(Welcome.Exists,true);
                 }
                 else {
-                    intentWelcome.putExtra(Welcome.Exists, false);
+                    data.putString("LOL","LOL");
+                    data.putBoolean(Welcome.Exists, false);
                 }
 
                 return true;

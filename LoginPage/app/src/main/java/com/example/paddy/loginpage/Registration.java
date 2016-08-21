@@ -4,8 +4,12 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -14,22 +18,44 @@ public class Registration extends AppCompatActivity {
     private EditText password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
         username = (EditText)findViewById(R.id.userNameRegister);
         password= (EditText)findViewById(R.id.userPasswordRegister);
-
-        new UpdateTask().execute();
-
-    }
+        Button button = (Button) findViewById(R.id.button);
 
 
+        OnClickListener submitListener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new UpdateTask2().execute();
+
+                Toast toast= Toast.makeText(getApplicationContext(),"Submission Successful",Toast.LENGTH_SHORT);
+                toast.show();
+
+
+            }
+        };
+
+        button.setOnClickListener(submitListener);
 
 
 
 
-    private class UpdateTask extends AsyncTask<Void,Void,Boolean>
+
+        }
+
+
+
+
+
+
+
+
+    private class UpdateTask2 extends AsyncTask<Void,Void,Boolean>
     {
         ContentValues cv;
         @Override
@@ -50,7 +76,7 @@ public class Registration extends AppCompatActivity {
                 SQLiteDatabase db=  helper.getWritableDatabase();
                 db.insert("USERINFO",null,cv);
 
-                Toast.makeText(getApplicationContext(),"User Registered Successfully", Toast.LENGTH_SHORT).show();
+
                 return  true;
             } catch (Exception e) {
                 e.printStackTrace();

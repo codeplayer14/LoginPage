@@ -23,7 +23,7 @@ class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL("CREATE TABLE USERINFO ( " + " _id INTEGER PRIMARY KEY AUTOINCREMENT USERNAME TEXT PASSWORD TEXT) ;");
+        db.execSQL("CREATE TABLE USERINFO ( " + " _id INTEGER PRIMARY KEY AUTOINCREMENT , "+"  USERNAME TEXT ,"+"PASSWORD TEXT ) ;" );
 
         ContentValues contentValues=new ContentValues();
         contentValues.put("USERNAME","Paddy");
